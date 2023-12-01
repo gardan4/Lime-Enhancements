@@ -28,11 +28,17 @@ class ModelBuild:
         return self.dtree
 
     @staticmethod
-    def selfmade_explain(self):
-        self_lime = lime_explainer.LimeTabularExplainer()
+    def selfmade_explain(X_train):
+        self_lime = lime_explainer.LimeTabularExplainer(training_data=np.array(X_train),
+                                                        feature_names=X_train.columns,
+                                                        class_names=['bad', 'good'],
+                                                        mode='classification')
         return self_lime
 
     @staticmethod
-    def explain(self):
-        real_lime = LimeTabularExplainer()
+    def explain(X_train):
+        real_lime = LimeTabularExplainer(training_data=np.array(X_train),
+                                         feature_names=X_train.columns,
+                                         class_names=['bad', 'good'],
+                                         mode='classification')
         return real_lime
