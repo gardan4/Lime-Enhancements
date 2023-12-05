@@ -55,17 +55,14 @@ def generate_perturbed_instances(original_instance, epsilon, num_instances=10):
 
 epsilon = 0.2
 num_instances = 10
-
+instance_to_explain = np.random.rand(5)
 perturbed_instances = generate_perturbed_instances(instance_to_explain, epsilon, num_instances)
-
-
-
 input_size = 5
 output_size = (5,5)
 data = np.random.rand(100, 5)
 labels=[]
 epochs =1000 
-instance_to_explain = np.random.rand(5)
+
 som = SOM(output_size, input_size, sigma=0.1, learning_rate=0.1)
 som.train(data, epochs)
 
