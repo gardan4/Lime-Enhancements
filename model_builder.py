@@ -4,7 +4,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 
-from selfmade_lime import lime_explainer
+from somlime.lime_tabular import LimeTabularExplainerSOM
 from lime.lime_tabular import LimeTabularExplainer
 
 class ModelBuild:
@@ -26,8 +26,8 @@ class ModelBuild:
         return self.model, accuracy, cm
 
     @staticmethod
-    def selfmade_explain(X_train, X_cols):
-        self_lime = lime_explainer.LimeTabularExplainer(training_data=X_train,
+    def som_explain(X_train, X_cols):
+        self_lime = LimeTabularExplainerSOM(training_data=X_train,
                                                         feature_names=X_cols,
                                                         class_names=['bad', 'good'],
                                                         mode='classification')
