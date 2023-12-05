@@ -7,8 +7,6 @@ from sklearn.linear_model import LogisticRegression
 from selfmade_lime import lime_explainer
 from lime.lime_tabular import LimeTabularExplainer
 
-
-
 class ModelBuild:
     def __init__(self, model_type):
         if model_type == 'DecisionTree':
