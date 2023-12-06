@@ -8,6 +8,8 @@ import json
 import string
 import numpy as np
 
+from .exceptions import LimeError
+
 from sklearn.utils import check_random_state
 
 
@@ -254,16 +256,16 @@ class Explanation(object):
         <head><script>%s </script></head><body>''' % bundle
         random_id = id_generator(size=15, random_state=check_random_state(self.random_state))
         out += u'''
-        <div class="selfmade_lime top_div" id="top_div%s"></div>
+        <div class="lime top_div" id="top_div%s"></div>
         ''' % random_id
 
         predict_proba_js = ''
         if self.mode == "classification" and predict_proba:
             predict_proba_js = u'''
             var pp_div = top_div.append('div')
-                                .classed('selfmade_lime predict_proba', true);
+                                .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%%');
-            var pp = new selfmade_lime.PredictProba(pp_svg, %s, %s);
+            var pp = new lime.PredictProba(pp_svg, %s, %s);
             ''' % (jsonize([str(x) for x in self.class_names]),
                    jsonize(list(self.predict_proba.astype(float))))
 
@@ -273,28 +275,28 @@ class Explanation(object):
             # (svg, predicted_value, min_value, max_value)
             predict_value_js = u'''
                     var pp_div = top_div.append('div')
-                                        .classed('selfmade_lime predicted_value', true);
+                                        .classed('lime predicted_value', true);
                     var pp_svg = pp_div.append('svg').style('width', '100%%');
-                    var pp = new selfmade_lime.PredictedValue(pp_svg, %s, %s, %s);
+                    var pp = new lime.PredictedValue(pp_svg, %s, %s, %s);
                     ''' % (jsonize(float(self.predicted_value)),
                            jsonize(float(self.min_value)),
                            jsonize(float(self.max_value)))
 
         exp_js = '''var exp_div;
-            var exp = new selfmade_lime.Explanation(%s);
+            var exp = new lime.Explanation(%s);
         ''' % (jsonize([str(x) for x in self.class_names]))
 
         if self.mode == "classification":
             for label in labels:
                 exp = jsonize(self.as_list(label))
                 exp_js += u'''
-                exp_div = top_div.append('div').classed('selfmade_lime explanation', true);
+                exp_div = top_div.append('div').classed('lime explanation', true);
                 exp.show(%s, %d, exp_div);
                 ''' % (exp, label)
         else:
             exp = jsonize(self.as_list())
             exp_js += u'''
-            exp_div = top_div.append('div').classed('selfmade_lime explanation', true);
+            exp_div = top_div.append('div').classed('lime explanation', true);
             exp.show(%s, %s, exp_div);
             ''' % (exp, self.dummy_label)
 
@@ -313,7 +315,7 @@ class Explanation(object):
                 **kwargs)
         out += u'''
         <script>
-        var top_div = d3.select('#top_div%s').classed('selfmade_lime top_div', true);
+        var top_div = d3.select('#top_div%s').classed('lime top_div', true);
         %s
         %s
         %s
@@ -323,7 +325,3 @@ class Explanation(object):
         out += u'</body></html>'
 
         return out
-
-
-class LimeError(Exception):
-    """Raise for errors"""
