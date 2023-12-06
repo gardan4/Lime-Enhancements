@@ -308,7 +308,10 @@ class LimeTabularExplainerSOM(object):
                          distance_metric='euclidean',
                          model_regressor=None,
                          sampling_method='gaussian',
-                         plot=False):
+                         plot=False,
+                         experiment=0):
+
+                        
         """Generates explanations for a prediction.
 
         First, we generate neighborhood data by randomly perturbing features
@@ -343,6 +346,8 @@ class LimeTabularExplainerSOM(object):
             An Explanation object (see explanation.py) with the corresponding
             explanations.
         """
+
+        
         if sp.sparse.issparse(data_row) and not sp.sparse.isspmatrix_csr(data_row):
             # Preventative code: if sparse, convert to csr format if not in csr format already
             data_row = data_row.tocsr()
@@ -362,7 +367,7 @@ class LimeTabularExplainerSOM(object):
                 metric=distance_metric
         ).ravel()
         #som distances
-        distances = som_model.distance_to_centroids(scaled_data[0], scaled_data)
+        distances = som_model.distance_to_centroids(scaled_data[0], scaled_data, exp=experiment)
         if plot == True:
             #print the distribution of distances in a plot
             import matplotlib.pyplot as plt
@@ -703,7 +708,7 @@ class RecurrentTabularExplainer(LimeTabularExplainerSOM):
 
     def explain_instance(self, data_row, classifier_fn, labels=(1,),
                          top_labels=None, num_features=10, num_samples=5000,
-                         distance_metric='euclidean', model_regressor=None):
+                         distance_metric='euclidean', model_regressor=None, experiment=0):
         """Generates explanations for a prediction.
 
         First, we generate neighborhood data by randomly perturbing features
@@ -745,4 +750,6 @@ class RecurrentTabularExplainer(LimeTabularExplainerSOM):
             num_features=num_features,
             num_samples=num_samples,
             distance_metric=distance_metric,
-            model_regressor=model_regressor)
+            model_regressor=model_regressor, 
+            experiment=experiment
+            )
