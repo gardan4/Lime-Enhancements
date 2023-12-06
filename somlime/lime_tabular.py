@@ -300,13 +300,15 @@ class LimeTabularExplainerSOM(object):
     def explain_instance(self,
                          data_row,
                          predict_fn,
+                         som_model,
                          labels=(1,),
                          top_labels=None,
                          num_features=10,
                          num_samples=5000,
                          distance_metric='euclidean',
                          model_regressor=None,
-                         sampling_method='gaussian'):
+                         sampling_method='gaussian',
+                         plot=False):
         """Generates explanations for a prediction.
 
         First, we generate neighborhood data by randomly perturbing features
@@ -353,11 +355,26 @@ class LimeTabularExplainerSOM(object):
                 scaled_data = scaled_data.tocsr()
         else:
             scaled_data = (data - self.scaler.mean_) / self.scaler.scale_
-        distances = sklearn.metrics.pairwise_distances(
+
+        distancesOld = sklearn.metrics.pairwise_distances(
                 scaled_data,
                 scaled_data[0].reshape(1, -1),
                 metric=distance_metric
         ).ravel()
+        #som distances
+        distances = som_model.distance_to_centroids(scaled_data[0], scaled_data)
+        if plot == True:
+            #print the distribution of distances in a plot
+            import matplotlib.pyplot as plt
+            plt.figure(figsize=(12, 7))
+            plt.subplot(1, 2, 1)
+            plt.hist(distancesOld)
+            plt.title('Original distances')
+            plt.subplot(1, 2, 2)
+            plt.hist(distances)
+            plt.title('Distances after SOM')
+            plt.show()
+
 
         yss = predict_fn(inverse)
 

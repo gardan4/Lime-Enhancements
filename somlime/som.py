@@ -28,25 +28,25 @@ class SOM:
     def distance_to_centroids(self, instance, perturbed_instances):
         instance_centroid_position = self.som.winner(instance)
 
-        print("Instance centroid:",instance_centroid_position)
+        # print("Instance centroid:",instance_centroid_position)
   
-        pert_instance_centroids = [(perturbed, self.som.winner(perturbed)) for perturbed in perturbed_instances]
-        print("Perturbed instances centroids:", pert_instance_centroids)
+        pert_instance_centroids = [self.som.winner(perturbed) for perturbed in perturbed_instances]
+        # print("Perturbed instances centroids:", pert_instance_centroids)
     
     
         same_cluster_inst_pos= []
  
         for pert_inst, pert_pos in pert_instance_centroids:
-            if instance_centroid_position == pert_pos:
-                same_cluster_inst_pos.append(pert_inst)
-                print("\nInstances in the same cluster", pert_inst, pert_pos)
+            # if instance_centroid_position == pert_pos:
+            same_cluster_inst_pos.append(pert_inst)
+            # print("\nInstances in the same cluster", pert_inst, pert_pos)
             
 
-        distances_in_cluster = [np.linalg.norm(np.array(instance,  dtype=np.float64) - np.array(pert_inst,  dtype=np.float64)) for pert_inst in same_cluster_inst_pos]
+        distances_in_cluster = [np.linalg.norm(np.array(instance_centroid_position,  dtype=np.float64) - np.array(pert_inst,  dtype=np.float64)) for pert_inst in pert_instance_centroids]
         
         # Sum of centroid distance + euclidean distance 
         distances_out_of_cluster = [np.linalg.norm(np.array(instance,  dtype=np.float64) - np.array(pert_inst,  dtype=np.float64))+ np.linalg.norm(np.array(instance_centroid_position,  dtype=np.float64) - np.array(pert_pos,  dtype=np.float64)) for pert_inst, pert_pos in pert_instance_centroids]
-        return list(zip(same_cluster_inst_pos, distances_in_cluster))
+        return np.array(distances_in_cluster)
 
 
 
