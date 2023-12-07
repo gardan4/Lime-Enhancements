@@ -9,6 +9,7 @@ from sklearn.utils import check_random_state
 
 class LimeBase(object):
     """Class for learning a locally linear sparse model from perturbed data"""
+
     def __init__(self,
                  kernel_fn,
                  verbose=False,
@@ -200,7 +201,7 @@ class LimeBase(object):
 
         if self.verbose:
             print('Intercept', easy_model.intercept_)
-            print('Prediction_local', local_pred,)
+            print('Prediction_local', local_pred, )
             print('Right:', neighborhood_labels[0, label])
         return (easy_model.intercept_,
                 sorted(zip(used_features, easy_model.coef_),
