@@ -98,10 +98,10 @@ class TableDomainMapper(explanation.DomainMapper):
                                     fweights))
             else:
                 out_dict = dict(map(lambda x: (x[0], (x[1], x[2], x[3])),
-                                zip(self.feature_indexes,
-                                    fnames,
-                                    self.feature_values,
-                                    fweights)))
+                                    zip(self.feature_indexes,
+                                        fnames,
+                                        self.feature_values,
+                                        fweights)))
                 out_list = [out_dict.get(x[0], (str(x[0]), 0.0, 0.0)) for x in exp]
         else:
             out_list = list(zip(self.exp_feature_names,
@@ -217,19 +217,19 @@ class LimeTabularExplainerSOM(object):
 
             if discretizer == 'quartile':
                 self.discretizer = QuartileDiscretizer(
-                        training_data, self.categorical_features,
-                        self.feature_names, labels=training_labels,
-                        random_state=self.random_state)
+                    training_data, self.categorical_features,
+                    self.feature_names, labels=training_labels,
+                    random_state=self.random_state)
             elif discretizer == 'decile':
                 self.discretizer = DecileDiscretizer(
-                        training_data, self.categorical_features,
-                        self.feature_names, labels=training_labels,
-                        random_state=self.random_state)
+                    training_data, self.categorical_features,
+                    self.feature_names, labels=training_labels,
+                    random_state=self.random_state)
             elif discretizer == 'entropy':
                 self.discretizer = EntropyDiscretizer(
-                        training_data, self.categorical_features,
-                        self.feature_names, labels=training_labels,
-                        random_state=self.random_state)
+                    training_data, self.categorical_features,
+                    self.feature_names, labels=training_labels,
+                    random_state=self.random_state)
             elif isinstance(discretizer, BaseDiscretizer):
                 self.discretizer = discretizer
             else:
@@ -239,7 +239,7 @@ class LimeTabularExplainerSOM(object):
             self.categorical_features = list(range(training_data.shape[1]))
 
             # Get the discretized_training_data when the stats are not provided
-            if(self.training_data_stats is None):
+            if (self.training_data_stats is None):
                 discretized_training_data = self.discretizer.discretize(
                     training_data)
 
@@ -311,7 +311,6 @@ class LimeTabularExplainerSOM(object):
                          plot=False,
                          experiment=0):
 
-                        
         """Generates explanations for a prediction.
 
         First, we generate neighborhood data by randomly perturbing features
@@ -347,7 +346,6 @@ class LimeTabularExplainerSOM(object):
             explanations.
         """
 
-        
         if sp.sparse.issparse(data_row) and not sp.sparse.isspmatrix_csr(data_row):
             # Preventative code: if sparse, convert to csr format if not in csr format already
             data_row = data_row.tocsr()
@@ -362,16 +360,16 @@ class LimeTabularExplainerSOM(object):
             scaled_data = (data - self.scaler.mean_) / self.scaler.scale_
 
         distancesOld = sklearn.metrics.pairwise_distances(
-                scaled_data,
-                scaled_data[0].reshape(1, -1),
-                metric=distance_metric
+            scaled_data,
+            scaled_data[0].reshape(1, -1),
+            metric=distance_metric
         ).ravel()
-        #som distances
+        # som distances
         distances = som_model.distance_to_centroids(scaled_data[0], scaled_data, exp=experiment)
         if plot == True:
-            #print the distribution of distances in a plot
+            # print the distribution of distances in a plot
             import matplotlib.pyplot as plt
-            plt.figure(figsize=(12, 7))
+            plt.figure(figsize=(7, 5))
             plt.subplot(1, 2, 1)
             plt.hist(distancesOld)
             plt.title('Original distances')
@@ -379,7 +377,6 @@ class LimeTabularExplainerSOM(object):
             plt.hist(distances)
             plt.title('Distances after SOM')
             plt.show()
-
 
         yss = predict_fn(inverse)
 
@@ -453,7 +450,7 @@ class LimeTabularExplainerSOM(object):
             discretized_feature_names = copy.deepcopy(feature_names)
             for f in self.discretizer.names:
                 discretized_feature_names[f] = self.discretizer.names[f][int(
-                        discretized_instance[f])]
+                    discretized_instance[f])]
 
         domain_mapper = TableDomainMapper(feature_names,
                                           values,
@@ -480,13 +477,13 @@ class LimeTabularExplainerSOM(object):
              ret_exp.local_exp[label],
              ret_exp.score[label],
              ret_exp.local_pred[label]) = self.base.explain_instance_with_data(
-                    scaled_data,
-                    yss,
-                    distances,
-                    label,
-                    num_features,
-                    model_regressor=model_regressor,
-                    feature_selection=self.feature_selection)
+                scaled_data,
+                yss,
+                distances,
+                label,
+                num_features,
+                model_regressor=model_regressor,
+                feature_selection=self.feature_selection)
 
         if self.mode == "regression":
             ret_exp.intercept[1] = ret_exp.intercept[0]
@@ -549,7 +546,7 @@ class LimeTabularExplainerSOM(object):
                 data = lhs(num_cols, samples=num_samples
                            ).reshape(num_samples, num_cols)
                 means = np.zeros(num_cols)
-                stdvs = np.array([1]*num_cols)
+                stdvs = np.array([1] * num_cols)
                 for i in range(num_cols):
                     data[:, i] = norm(loc=means[i], scale=stdvs[i]).ppf(data[:, i])
                 data = np.array(data)
@@ -663,7 +660,7 @@ class RecurrentTabularExplainer(LimeTabularExplainerSOM):
         # Reshape X
         n_samples, n_timesteps, n_features = training_data.shape
         training_data = np.transpose(training_data, axes=(0, 2, 1)).reshape(
-                n_samples, n_timesteps * n_features)
+            n_samples, n_timesteps * n_features)
         self.n_timesteps = n_timesteps
         self.n_features = n_features
         if feature_names is None:
@@ -675,20 +672,20 @@ class RecurrentTabularExplainer(LimeTabularExplainerSOM):
 
         # Send off the the super class to do its magic.
         super(RecurrentTabularExplainer, self).__init__(
-                training_data,
-                mode=mode,
-                training_labels=training_labels,
-                feature_names=feature_names,
-                categorical_features=categorical_features,
-                categorical_names=categorical_names,
-                kernel_width=kernel_width,
-                kernel=kernel,
-                verbose=verbose,
-                class_names=class_names,
-                feature_selection=feature_selection,
-                discretize_continuous=discretize_continuous,
-                discretizer=discretizer,
-                random_state=random_state)
+            training_data,
+            mode=mode,
+            training_labels=training_labels,
+            feature_names=feature_names,
+            categorical_features=categorical_features,
+            categorical_names=categorical_names,
+            kernel_width=kernel_width,
+            kernel=kernel,
+            verbose=verbose,
+            class_names=class_names,
+            feature_selection=feature_selection,
+            discretize_continuous=discretize_continuous,
+            discretizer=discretizer,
+            random_state=random_state)
 
     def _make_predict_proba(self, func):
         """
@@ -750,6 +747,6 @@ class RecurrentTabularExplainer(LimeTabularExplainerSOM):
             num_features=num_features,
             num_samples=num_samples,
             distance_metric=distance_metric,
-            model_regressor=model_regressor, 
+            model_regressor=model_regressor,
             experiment=experiment
-            )
+        )
