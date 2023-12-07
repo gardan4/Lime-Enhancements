@@ -7,6 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from somlime.lime_tabular import LimeTabularExplainerSOM
 from lime.lime_tabular import LimeTabularExplainer
 
+
 class ModelBuild:
     def __init__(self, model_type):
         if model_type == 'DecisionTree':
@@ -28,9 +29,9 @@ class ModelBuild:
     @staticmethod
     def som_explain(X_train, X_cols):
         self_lime = LimeTabularExplainerSOM(training_data=X_train,
-                                                        feature_names=X_cols,
-                                                        class_names=['bad', 'good'],
-                                                        mode='classification')
+                                            feature_names=X_cols,
+                                            class_names=['bad', 'good'],
+                                            mode='classification')
         return self_lime
 
     @staticmethod
