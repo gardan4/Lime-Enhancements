@@ -372,10 +372,12 @@ class LimeTabularExplainerSOM(object):
             plt.figure(figsize=(7, 5))
             plt.subplot(1, 2, 1)
             plt.hist(distancesOld)
+            plt.xlim(0, 10)
             plt.title('Original distances')
             plt.subplot(1, 2, 2)
             plt.hist(distances)
-            plt.title('Distances after SOM')
+            plt.xlim(0, 10)
+            plt.title('Distances with SOM clustering')
             plt.show()
 
         yss = predict_fn(inverse)
