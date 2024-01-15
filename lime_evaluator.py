@@ -1,4 +1,6 @@
 import pandas as pd
+#disable pandas future warning
+pd.options.mode.chained_assignment = None  # default='warn'
 class Lime_eval:
     @staticmethod
     def evaluate_stability(exp_inst, instances=30):
@@ -23,8 +25,8 @@ class Lime_eval:
             # Append the row to the DataFrame
             df = pd.concat([df, pd.DataFrame(row, index=[0])], ignore_index=True)
 
-        # get the mean and std for each category
-        print(df.describe().loc[['mean', 'std']])
+        # get the mean and std for each category and round them to 2 decimals
+        return df
 
         # get the average of the mean and std
-        print(df.describe().mean(axis=1))
+        # (df.describe().mean(axis=1))

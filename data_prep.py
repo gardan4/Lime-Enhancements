@@ -29,7 +29,12 @@ class DataPrep:
         compas_score = compas_score[compas_score['is_recid'] != -1]
         compas_score = compas_score[compas_score['c_charge_degree'] != 'O']
         compas_score = compas_score[compas_score['score_text'] != 'N/A']
-        X = compas_score[['days_in_jail', 'age', 'decile_score', 'priors_count', 'c_days_from_compas', 'is_violent_recid',
-                    'v_decile_score']]
+        #get all the unique values from race
+        compas_score['race'].replace({'Other':0, 'African-American':1, 'Caucasian':2, 'Hispanic':3, 'Asian':4, 'Native American':5}, inplace=True)
+
+
+
+        # X = compas_score[['days_in_jail', 'age', 'decile_score', 'priors_count', 'c_days_from_compas', 'is_violent_recid','v_decile_score']]
+        X = compas_score[['days_in_jail', 'age', 'decile_score', 'priors_count', 'c_days_from_compas', 'race', 'v_decile_score']]
         y = compas_score['is_recid']
         return X, y
