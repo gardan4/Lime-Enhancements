@@ -2,19 +2,19 @@ import pandas as pd
 class Lime_eval:
     @staticmethod
     def evaluate_stability(exp_inst, instances=30):
-        # Explaination stability test
-        explainations = []
+        # Explanation stability test
+        explanations = []
 
         for i in range(instances):
-            explainations += [exp_inst.as_list()]
+            explanations += [exp_inst.as_list()]
 
         # Extracting unique categories
-        categories = sorted({item[0] for sublist in explainations for item in sublist})
+        categories = sorted({item[0] for sublist in explanations for item in sublist})
 
         # Creating DataFrame
         df = pd.DataFrame(columns=categories)
         # Populating the DataFrame
-        for sublist in explainations:
+        for sublist in explanations:
             # Initialize a row with all None values
             row = {cat: None for cat in categories}
             # Update the values for existing categories
