@@ -3,8 +3,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
-
-from somlime.lime_tabular import LimeTabularExplainerSOM
+from decision_tree_lime import LimeTabularExplainer as LTE_dt
 from lime.lime_tabular import LimeTabularExplainer
 
 
@@ -27,8 +26,8 @@ class ModelBuild:
         return self.model, accuracy, cm
 
     @staticmethod
-    def som_explain(X_train, X_cols):
-        self_lime = LimeTabularExplainerSOM(training_data=X_train,
+    def decision_tree_explain(X_train, X_cols):
+        self_lime = (training_data=X_train,
                                             feature_names=X_cols,
                                             class_names=['bad', 'good'],
                                             mode='classification')
