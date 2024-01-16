@@ -1,14 +1,20 @@
 import pandas as pd
+from model_builder import ModelBuild
 #disable pandas future warning
 pd.options.mode.chained_assignment = None  # default='warn'
 class Lime_eval:
     @staticmethod
-    def evaluate_stability(exp_inst, instances=30):
+    def evaluate_stability(inst, model_prob, explainer_lime, som_model=0,  instances=50, experiment=0):
         # Explaination stability test
         explainations = []
-
-        for i in range(instances):
-            explainations += [exp_inst.as_list()]
+        if experiment == 0:
+            for i in range(instances):
+                exp_inst = explainer_lime.explain_instance(inst, model_prob, num_features=7)
+                explainations += [exp_inst.as_list()]
+        else:
+            for i in range(instances):
+                exp_inst = explainer_lime.explain_instance(inst, model_prob, som_model, num_features=7, plot=False, experiment=3)
+                explainations += [exp_inst.as_list()]
 
         # Extracting unique categories
         categories = sorted({item[0] for sublist in explainations for item in sublist})
