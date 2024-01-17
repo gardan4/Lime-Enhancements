@@ -365,7 +365,7 @@ class LimeTabularExplainerSOM(object):
             metric=distance_metric
         ).ravel()
         # som distances
-        distances = som_model.distance_to_centroids(scaled_data[0], scaled_data, exp=experiment)
+        distances = som_model.distance_to_centroids(inverse[0], inverse, exp=experiment)
         if plot == True:
             # print the distribution of distances in a plot
             import matplotlib.pyplot as plt
