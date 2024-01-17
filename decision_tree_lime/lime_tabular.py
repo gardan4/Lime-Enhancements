@@ -453,11 +453,20 @@ class LimeTabularExplainerDT(object):
             ret_exp.min_value = min_y
             ret_exp.max_value = max_y
             labels = [0]
+        # for label in labels:
+        #     (ret_exp.intercept[label],
+        #      ret_exp.local_exp[label],
+        #      ret_exp.score[label],
+        #      ret_exp.local_pred[label]) = self.base.explain_instance_with_data(
+        #             scaled_data,
+        #             yss,
+        #             distances,
+        #             label,
+        #             num_features,
+        #             model_regressor=model_regressor,
+        #             feature_selection=self.feature_selection)
         for label in labels:
-            (ret_exp.intercept[label],
-             ret_exp.local_exp[label],
-             ret_exp.score[label],
-             ret_exp.local_pred[label]) = self.base.explain_instance_with_data(
+            ret_exp = self.base.explain_instance_with_data(
                     scaled_data,
                     yss,
                     distances,
@@ -651,7 +660,7 @@ class RecurrentTabularExplainer(LimeTabularExplainerDT):
         feature_names = ['{}_t-{}'.format(n, n_timesteps - (i + 1))
                          for n in feature_names for i in range(n_timesteps)]
 
-        # Send off the the super class to do its magic.
+        # Send off the super class to do its magic.
         super(RecurrentTabularExplainer, self).__init__(
                 training_data,
                 mode=mode,

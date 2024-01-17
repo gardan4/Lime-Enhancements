@@ -4,6 +4,7 @@ Contains abstract functionality for learning locally linear sparse model.
 import numpy as np
 import scipy as sp
 from sklearn.linear_model import Ridge, lars_path
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.utils import check_random_state
 
 
@@ -187,22 +188,36 @@ class LimeBase(object):
                                                weights,
                                                num_features,
                                                feature_selection)
+        print(model_regressor)
         if model_regressor is None:
-            model_regressor = Ridge(alpha=1, fit_intercept=True,
-                                    random_state=self.random_state)
+            model_regressor = DecisionTreeRegressor(criterion="squared_error",
+                                                    splitter="best",
+                                                    max_depth=3,  # TODO: tune
+                                                    min_samples_split=2,
+                                                    min_samples_leaf=1,
+                                                    min_weight_fraction_leaf=0.0,
+                                                    max_features=None,
+                                                    random_state=self.random_state,  # needs to remain
+                                                    max_leaf_nodes=8,  # TODO: tune
+                                                    min_impurity_decrease=0.0,
+                                                    ccp_alpha=0.0)
+        print(model_regressor)
         easy_model = model_regressor
         easy_model.fit(neighborhood_data[:, used_features],
                        labels_column, sample_weight=weights)
+
         prediction_score = easy_model.score(
             neighborhood_data[:, used_features],
             labels_column, sample_weight=weights)
 
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
 
-        if self.verbose:
-            print('Intercept', easy_model.intercept_)
-            print('Prediction_local', local_pred, )
-            print('Right:', neighborhood_labels[0, label])
+        print(easy_model.feature_importances_)
+
+        # if self.verbose:
+        #     print('Intercept', easy_model.intercept_)
+        #     print('Prediction_local', local_pred, )
+        #     print('Right:', neighborhood_labels[0, label])
         return (easy_model.intercept_,
                 sorted(zip(used_features, easy_model.coef_),
                        key=lambda x: np.abs(x[1]), reverse=True),
