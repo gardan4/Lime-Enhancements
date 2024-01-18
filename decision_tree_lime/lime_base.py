@@ -212,13 +212,13 @@ class LimeBase(object):
 
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
 
-        print(easy_model.feature_importances_)
+        easy_model.intercept_ = 0  # TODO: currently manually set
 
-        # if self.verbose:
-        #     print('Intercept', easy_model.intercept_)
-        #     print('Prediction_local', local_pred, )
-        #     print('Right:', neighborhood_labels[0, label])
+        if self.verbose:
+            print('Intercept', easy_model.intercept_)
+            print('Prediction_local', local_pred, )
+            print('Right:', neighborhood_labels[0, label])
         return (easy_model.intercept_,
-                sorted(zip(used_features, easy_model.coef_),
+                sorted(zip(used_features, easy_model.feature_importances_),
                        key=lambda x: np.abs(x[1]), reverse=True),
                 prediction_score, local_pred)
