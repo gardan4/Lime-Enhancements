@@ -212,7 +212,7 @@ class LimeBase(object):
 
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
 
-        easy_model.intercept_ = 0  # TODO: currently manually set
+        easy_model.intercept_ = 0.9  # TODO: currently manually set
 
         if self.verbose:
             print('Intercept', easy_model.intercept_)
