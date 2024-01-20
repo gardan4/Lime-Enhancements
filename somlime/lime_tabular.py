@@ -14,7 +14,7 @@ import sklearn.preprocessing
 from sklearn.utils import check_random_state
 from pyDOE2 import lhs
 from scipy.stats.distributions import norm
-
+from sklearn.preprocessing import MinMaxScaler
 from lime.discretize import QuartileDiscretizer
 from lime.discretize import DecileDiscretizer
 from lime.discretize import EntropyDiscretizer
@@ -364,20 +364,24 @@ class LimeTabularExplainerSOM(object):
             scaled_data[0].reshape(1, -1),
             metric=distance_metric
         ).ravel()
-        # som distances
-        distances = som_model.distance_to_centroids(inverse[0], inverse, exp=experiment)
+        scaler_inv = MinMaxScaler()
+
+        
+        scaled_inverse = scaler_inv.fit_transform(inverse)
+
+        #som distances
+        
+        distances = som_model.distance_to_centroids(scaled_inverse[0], scaled_inverse, scaler_inv, exp=experiment)
         if plot == True:
             # print the distribution of distances in a plot
             import matplotlib.pyplot as plt
             plt.figure(figsize=(7, 5))
             plt.subplot(1, 2, 1)
             plt.hist(distancesOld)
-            plt.xlim(0, 10)
             plt.title('Original distances')
             plt.subplot(1, 2, 2)
             plt.hist(distances)
-            plt.xlim(0, 10)
-            plt.title('Distances with SOM clustering')
+            plt.title('Distances after SOM')
             plt.show()
 
         yss = predict_fn(inverse)
