@@ -371,8 +371,9 @@ class LimeTabularExplainerSOM(object):
 
         #som distances
         
-        distances = som_model.distance_to_centroids(scaled_inverse[0], scaled_inverse, scaler_inv, exp=experiment)
+
         if plot == True:
+            distances = som_model.distance_to_centroids(scaled_inverse[0], scaled_inverse, scaler_inv, exp=experiment, plot=True)
             # print the distribution of distances in a plot
             import matplotlib.pyplot as plt
             plt.figure(figsize=(7, 5))
@@ -383,6 +384,9 @@ class LimeTabularExplainerSOM(object):
             plt.hist(distances)
             plt.title('Distances after SOM')
             plt.show()
+        else:
+            distances = som_model.distance_to_centroids(scaled_inverse[0], scaled_inverse, scaler_inv, exp=experiment)
+
 
         yss = predict_fn(inverse)
 

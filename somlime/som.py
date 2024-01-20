@@ -18,30 +18,51 @@ class SOM:
         self.som.train(data, epochs)
        
 
-    def plot_distance_map(self):
-        # scatterplot the winning points and superimpose a representation of the distance map
-        plt.figure(figsize=(8, 7))
-        plt.pcolor(self.som.distance_map().T, cmap='bone_r')
-        plt.colorbar()
-        plt.title('Distance map, sigma: '+ str(self.sigma) +", learning rate: "+ str(self.learning_rate))
+    def plot_distanceAndDensity_map(self, pert_instance_centroids, instance_centroid_position):
+        density_map = np.zeros((self.output_size[0], self.output_size[1]))
+        # Count instances in each cell of the grid
+        for t in pert_instance_centroids:
+            x, y = t[1]
+            density_map[x, y] += 1
+
+
+        fig, (ax0, ax1) = plt.subplots(1, 2)
+
+        # distance map
+        ax0.pcolor(self.som.distance_map().T, cmap='bone_r')
+        ax0.set_title('Distance map, sigma: '+ str(self.sigma) +", learning rate: "+ str(self.learning_rate))
+
+        # density map
+        ax1.pcolor(density_map.T, cmap='bone_r')
+        ax1.scatter(float(instance_centroid_position[0] + 0.5), float(instance_centroid_position[1] + 0.5), color='red',
+                    marker='o', label='Circle Center')
+        ax1.set_title('Density map, sigma: ' + str(self.sigma) + ", learning rate: " + str(self.learning_rate))
+
+        fig.tight_layout()
+        #add colorbar
+        fig.colorbar(ax0.pcolor(self.som.distance_map().T, cmap='bone_r'), ax=ax0)
+        fig.colorbar(ax1.pcolor(density_map.T, cmap='bone_r'), ax=ax1)
+        #more space between subplots
+        fig.subplots_adjust(wspace=0.5)
+
         plt.show()
 
     # Calculating distances to the centroids of the SOM clusters
-    def distance_to_centroids(self, instance, perturbed_instances, scaler_inv, exp):
+    def distance_to_centroids(self, instance, perturbed_instances, scaler_inv, exp, plot=False):
         instance_centroid_position = self.som.winner(instance)
-        print("Instance", instance)
-        print("Instance centroid:",instance_centroid_position)
+        # print("Instance", instance)
+        # print("Instance centroid:",instance_centroid_position)
 
 
         instance_centroid_position_2 = self.som.winner(instance)
 
-        print("Instance centroid:",instance_centroid_position_2)
+        # print("Instance centroid:",instance_centroid_position_2)
   
         pert_instance_centroids = [(perturbed, self.som.winner(perturbed)) for perturbed in perturbed_instances]
         #print("Perturbed instances centroids: ", *pert_instance_centroids, sep='\n')
 
-        for pert_inst, pert_pos in pert_instance_centroids:
-            print("Perturbed instances centroids: ", scaler_inv.inverse_transform(pert_inst.reshape(1, -1)), pert_pos)
+        # for pert_inst, pert_pos in pert_instance_centroids:
+        #     print("Perturbed instances centroids: ", scaler_inv.inverse_transform(pert_inst.reshape(1, -1)), pert_pos)
            
         
         #Centroids distance     
@@ -65,26 +86,9 @@ class SOM:
                 else:
                     distances.append(10.000)
 
-        SOM.plot_distance_map(self)
-        density_map = np.zeros((self.output_size[0], self.output_size[1]))
-
-        # Count instances in each cell of the grid
-        for t in pert_instance_centroids:
-            x, y = t[1]
-            density_map[x, y] += 1
-
-        # Create a figure with a specified size
-        plt.figure(figsize=(8, 7))
-
-        # Plot the density map
-        plt.pcolor(density_map.T, cmap='bone_r')
-        plt.colorbar()
-        plt.scatter(float(instance_centroid_position[0]+0.5), float(instance_centroid_position[1]+0.5), color='red', marker='o', label='Circle Center')
-        plt.title('Density map, sigma: '+ str(self.sigma) +", learning rate: "+ str(self.learning_rate))
-
-        # Add a colorbar to the plot
-        
-       
+        # Plot the distance map
+        if plot:
+            self.plot_distanceAndDensity_map(pert_instance_centroids, instance_centroid_position)
 
 
         return np.array(distances)
