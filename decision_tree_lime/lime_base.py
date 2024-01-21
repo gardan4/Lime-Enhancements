@@ -6,7 +6,7 @@ import scipy as sp
 from sklearn.linear_model import Ridge, lars_path
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.utils import check_random_state
-
+from sklearn import tree
 
 class LimeBase(object):
     """Class for learning a locally linear sparse model from perturbed data"""
@@ -179,8 +179,7 @@ class LimeBase(object):
             score is the R^2 value of the returned explanation
             local_pred is the prediction of the explanation model on the original instance
         """
-        # print(distances)
-        # print(distances.shape)
+
         weights = self.kernel_fn(distances)
         labels_column = neighborhood_labels[:, label]
         used_features = self.feature_selection(neighborhood_data,
@@ -188,7 +187,6 @@ class LimeBase(object):
                                                weights,
                                                num_features,
                                                feature_selection)
-        print(model_regressor)
         if model_regressor is None:
             model_regressor = DecisionTreeRegressor(criterion="squared_error",
                                                     splitter="best",
@@ -201,10 +199,18 @@ class LimeBase(object):
                                                     max_leaf_nodes=8,  # TODO: tune
                                                     min_impurity_decrease=0.0,
                                                     ccp_alpha=0.0)
-        print(model_regressor)
+
         easy_model = model_regressor
         easy_model.fit(neighborhood_data[:, used_features],
                        labels_column, sample_weight=weights)
+
+        tree.plot_tree(easy_model, feature_names=['days_in_jail',
+                                                  'age',
+                                                  'decile_score',
+                                                  'priors_count',
+                                                  'c_days_from_compas',
+                                                  'race',
+                                                  'v_decile_score']) # TODO: this is wrong. The order has to be different!!!
 
         prediction_score = easy_model.score(
             neighborhood_data[:, used_features],
@@ -212,7 +218,7 @@ class LimeBase(object):
 
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
 
-        easy_model.intercept_ = 0.9  # TODO: currently manually set
+        easy_model.intercept_ = 0 # TODO: currently manually set
 
         if self.verbose:
             print('Intercept', easy_model.intercept_)
