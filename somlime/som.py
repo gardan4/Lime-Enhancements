@@ -48,6 +48,7 @@ class SOM:
 
         plt.show()
 
+
     # Calculating distances to the centroids of the SOM clusters
     def distance_to_centroids(self, instance, perturbed_instances, scaler_inv, exp, plot=False):
         instance_centroid_position = self.som.winner(instance)
