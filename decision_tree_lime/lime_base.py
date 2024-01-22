@@ -204,8 +204,7 @@ class LimeBase(object):
         easy_model.fit(neighborhood_data[:, used_features],
                        labels_column, sample_weight=weights)
 
-        feature_name_list = ['age', 'two_year_recid', 'priors-count', 'length_of_stay', 'c_charge_degree_F', 'c_charge_degree_M',\
-                            'sex_Female', 'sex_Male', 'race']
+        feature_name_list = neighborhood_labels
         feat_names = [feature_name_list[i] for i in used_features]
         tree.plot_tree(easy_model, feature_names=feat_names)
 
