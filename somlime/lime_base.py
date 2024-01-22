@@ -4,9 +4,8 @@ Contains abstract functionality for learning locally linear sparse model.
 import numpy as np
 import scipy as sp
 from sklearn.linear_model import Ridge, lars_path
-from sklearn.tree import DecisionTreeRegressor
 from sklearn.utils import check_random_state
-from sklearn import tree
+
 
 class LimeBase(object):
     """Class for learning a locally linear sparse model from perturbed data"""
@@ -179,7 +178,8 @@ class LimeBase(object):
             score is the R^2 value of the returned explanation
             local_pred is the prediction of the explanation model on the original instance
         """
-
+        # print(distances)
+        # print(distances.shape)
         weights = self.kernel_fn(distances)
         labels_column = neighborhood_labels[:, label]
         used_features = self.feature_selection(neighborhood_data,
@@ -188,40 +188,22 @@ class LimeBase(object):
                                                num_features,
                                                feature_selection)
         if model_regressor is None:
-            model_regressor = DecisionTreeRegressor(criterion="squared_error",
-                                                    splitter="best",
-                                                    max_depth=2,  # TODO: tune
-                                                    min_samples_split=2,
-                                                    min_samples_leaf=1,
-                                                    min_weight_fraction_leaf=0.0,
-                                                    max_features=None,
-                                                    random_state=self.random_state,  # needs to remain
-                                                    max_leaf_nodes=4,  # TODO: tune
-                                                    min_impurity_decrease=0.0,
-                                                    ccp_alpha=0.0)
-
+            model_regressor = Ridge(alpha=1, fit_intercept=True,
+                                    random_state=self.random_state)
         easy_model = model_regressor
         easy_model.fit(neighborhood_data[:, used_features],
                        labels_column, sample_weight=weights)
-
-        feature_name_list = ['age', 'two_year_recid', 'priors-count', 'length_of_stay', 'c_charge_degree_F', 'c_charge_degree_M',\
-                            'sex_Female', 'sex_Male', 'race']
-        feat_names = [feature_name_list[i] for i in used_features]
-        tree.plot_tree(easy_model, feature_names=feat_names)
-
         prediction_score = easy_model.score(
             neighborhood_data[:, used_features],
             labels_column, sample_weight=weights)
 
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
 
-        easy_model.intercept_ = 0  # manually set -> prevents the feature values from being changed in LIME
-
         if self.verbose:
             print('Intercept', easy_model.intercept_)
             print('Prediction_local', local_pred, )
             print('Right:', neighborhood_labels[0, label])
         return (easy_model.intercept_,
-                sorted(zip(used_features, easy_model.feature_importances_),
+                sorted(zip(used_features, easy_model.coef_),
                        key=lambda x: np.abs(x[1]), reverse=True),
                 prediction_score, local_pred)
