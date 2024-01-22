@@ -190,7 +190,7 @@ class LimeBase(object):
         if model_regressor is None:
             model_regressor = DecisionTreeRegressor(criterion="squared_error",
                                                     splitter="best",
-                                                    max_depth=3,  # TODO: tune
+                                                    max_depth=2,  # TODO: tune
                                                     min_samples_split=2,
                                                     min_samples_leaf=1,
                                                     min_weight_fraction_leaf=0.0,
@@ -204,13 +204,9 @@ class LimeBase(object):
         easy_model.fit(neighborhood_data[:, used_features],
                        labels_column, sample_weight=weights)
 
-        tree.plot_tree(easy_model, feature_names=['days_in_jail',
-                                                  'age',
-                                                  'decile_score',
-                                                  'priors_count',
-                                                  'c_days_from_compas',
-                                                  'race',
-                                                  'v_decile_score']) # TODO: this is wrong. The order has to be different!!!
+        feature_name_list = ['days_in_jail','age', 'decile_score','priors_count','c_days_from_compas','race','v_decile_score']
+        feat_names = [feature_name_list[i] for i in used_features]
+        tree.plot_tree(easy_model, feature_names=feat_names)
 
         prediction_score = easy_model.score(
             neighborhood_data[:, used_features],
@@ -218,7 +214,7 @@ class LimeBase(object):
 
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
 
-        easy_model.intercept_ = 0 # TODO: currently manually set
+        easy_model.intercept_ = 0  # TODO: currently manually set
 
         if self.verbose:
             print('Intercept', easy_model.intercept_)
