@@ -86,10 +86,10 @@ class Lime_eval:
                     f"{variable:35} F-statistic = {f_stat:10} p-value = {p_val:10} Variance is {var_rel} in modified experiment")
 
         if mean:
-            df0mean = (df_exp0 ** 2).mean(axis=1)
+            df0mean = (df_exp0).mean(axis=1)
             df0mean = pd.DataFrame(df0mean, columns=['mean'])
 
-            df1mean = (df_exp1 ** 2).mean(axis=1)
+            df1mean = (df_exp1).mean(axis=1)
             df1mean = pd.DataFrame(df1mean, columns=['mean'])
 
             significant_results = {}
