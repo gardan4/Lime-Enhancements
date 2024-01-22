@@ -15,7 +15,7 @@ import sklearn.preprocessing
 from sklearn.utils import check_random_state
 from pyDOE2 import lhs
 from scipy.stats.distributions import norm
-
+from sklearn.preprocessing import MinMaxScaler
 from lime.discretize import QuartileDiscretizer
 from lime.discretize import DecileDiscretizer
 from lime.discretize import EntropyDiscretizer
