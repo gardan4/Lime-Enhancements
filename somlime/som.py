@@ -62,8 +62,8 @@ class SOM:
         pert_instance_centroids = [(perturbed, self.som.winner(perturbed)) for perturbed in perturbed_instances]
         # print("Perturbed instances centroids: ", *pert_instance_centroids, sep='\n')
 
-        # for pert_inst, pert_pos in pert_instance_centroids:
-        #     print("Perturbed instances centroids: ", scaler_inv.inverse_transform(pert_inst.reshape(1, -1)), pert_pos)
+        for pert_inst, pert_pos in pert_instance_centroids:
+            print("Perturbed instances centroids: ", scaler_inv.inverse_transform(pert_inst.reshape(1, -1)), pert_pos)
 
         # Centroids distance
         if (exp == 1):

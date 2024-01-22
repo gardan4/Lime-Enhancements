@@ -36,7 +36,7 @@ class Lime_eval:
         return df
 
     @staticmethod
-    def compare_experiments(df_exp0, df_exp1, p_value_cutoff=0.05, all=True, mean=True):
+    def compare_experiments(df_exp0, df_exp1, p_value_cutoff=0.05, allcols=True, mean=True):
         """
         Compares the variances of two experiments using F-test.
 
@@ -48,7 +48,12 @@ class Lime_eval:
         Returns:
         None
         """
-        if all:
+
+        #replace all nan in df_exp0 and df_exp1 with 0
+        df_exp0 = df_exp0.fillna(0)
+        df_exp1 = df_exp1.fillna(0)
+
+        if allcols:
             significant_results = {}
             non_significant_results = {}
 
