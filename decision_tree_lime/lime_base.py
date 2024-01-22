@@ -196,7 +196,7 @@ class LimeBase(object):
                                                     min_weight_fraction_leaf=0.0,
                                                     max_features=None,
                                                     random_state=self.random_state,  # needs to remain
-                                                    max_leaf_nodes=8,  # TODO: tune
+                                                    max_leaf_nodes=4,  # TODO: tune
                                                     min_impurity_decrease=0.0,
                                                     ccp_alpha=0.0)
 
@@ -214,7 +214,7 @@ class LimeBase(object):
 
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
 
-        easy_model.intercept_ = 0  # TODO: currently manually set
+        easy_model.intercept_ = 0  # manually set -> prevents the feature values from being changed in LIME
 
         if self.verbose:
             print('Intercept', easy_model.intercept_)
