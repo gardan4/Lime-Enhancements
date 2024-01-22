@@ -19,12 +19,12 @@ class Lime_eval:
                 explainations += [exp_inst.as_list()]
 
         # Extracting unique categories
-        categories = sorted({item[0] for sublist in explanations for item in sublist})
+        categories = sorted({item[0] for sublist in explainations for item in sublist})
 
         # Creating DataFrame
         df = pd.DataFrame(columns=categories)
         # Populating the DataFrame
-        for sublist in explanations:
+        for sublist in explainations:
             # Initialize a row with all None values
             row = {cat: None for cat in categories}
             # Update the values for existing categories
