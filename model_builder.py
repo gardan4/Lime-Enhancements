@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 
 from somlime.lime_tabular import LimeTabularExplainerSOM
 from lime.lime_tabular import LimeTabularExplainer
+from NB_lime.lime_tabular import LimeTabularExplainer_NB
 
 
 class ModelBuild:
@@ -25,7 +26,14 @@ class ModelBuild:
         accuracy = accuracy_score(y_test, y_pred)
         cm = confusion_matrix(y_test, y_pred)
         return self.model, accuracy, cm
-
+    
+    @staticmethod
+    def naive_bayes_explain(X_train, X_cols):
+        self_lime = LimeTabularExplainer_NB(training_data=X_train,
+                            feature_names=X_cols,
+                            class_names=['bad', 'good'],
+                            mode='classification')
+        return self_lime
     @staticmethod
     def som_explain(X_train, X_cols):
         self_lime = LimeTabularExplainerSOM(training_data=X_train,
