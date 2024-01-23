@@ -6,6 +6,8 @@ import scipy as sp
 from sklearn.linear_model import Ridge, lars_path
 from sklearn.utils import check_random_state
 from sklearn.naive_bayes import GaussianNB
+from sklearn.feature_selection import mutual_info_classif
+import pandas as pd
 
 
 class LimeBase(object):
@@ -183,35 +185,41 @@ class LimeBase(object):
         # print(distances.shape)
         weights = self.kernel_fn(distances)
         labels_column = neighborhood_labels[:, label]
+        threshold = 0.5  # Adjust the threshold as needed
+        labels_column = np.where(labels_column <= threshold, 0, 1)
         used_features = self.feature_selection(neighborhood_data,
-                                               labels_column,
-                                               weights,
-                                               num_features,
-                                               feature_selection)
+                                       labels_column,
+                                       weights,
+                                       num_features,
+                                       feature_selection)
+
         
         if model_regressor is None:
             model_regressor = GaussianNB()
         easy_model = model_regressor
-        print(neighborhood_data[:, used_features].shape)
-        print(labels_column.shape)
+        print(neighborhood_data[:, used_features])
+        print(labels_column[:100])
         easy_model.fit(neighborhood_data[:, used_features],
-                       labels_column)
+                      labels_column, sample_weight=weights)
         prediction_score = easy_model.score(
             neighborhood_data[:, used_features],
             labels_column, sample_weight=weights)
 
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
-        information_gain = mutual_info_classif(X, y, discrete_features='auto', random_state=42)
-
+        information_gain = mutual_info_classif(neighborhood_data[:, used_features], labels_column, discrete_features='auto', random_state=42)
         scaled_information_gain = information_gain / information_gain.max()
 
-        information_gain_df = pd.DataFrame({'Feature': X.columns, 'Scaled Information Gain': scaled_information_gain})
-        information_gain_df = information_gain_df.sort_values(by='Scaled Information Gain', ascending=False)
+# Combine used_features and scaled_information_gain into a list of tuples
+        feature_coef_pairs = list(zip(used_features, scaled_information_gain))
 
-        easy_model_coef=information_gain_df
+# Sort the list by the absolute value of the coefficient in descending order
+        sorted_feature_coef_pairs = sorted(feature_coef_pairs, key=lambda x: np.abs(x[1]), reverse=True)
+        easy_model.intercept_ = 0
+
         if self.verbose:
-            print('Prediction_local', local_pred)
+            print('Intercept', easy_model.intercept_)
+            print('Prediction_local:', local_pred)
             print('Right:', neighborhood_labels[0, label])
-        return (sorted(zip(used_features, easy_model_coef),
-                       key=lambda x: np.abs(x[1]), reverse=True),
-                prediction_score, local_pred)
+
+        return easy_model.intercept_, sorted_feature_coef_pairs, prediction_score, local_pred
+        
