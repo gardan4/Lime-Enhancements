@@ -138,7 +138,7 @@ class LimeTabularExplainerDT(object):
                  feature_selection='auto',
                  discretize_continuous=True,
                  discretizer='quartile',
-                 sample_around_instance=False,
+                 sample_around_instance=True,
                  random_state=None,
                  training_data_stats=None):
         """Init function.
