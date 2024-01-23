@@ -197,8 +197,8 @@ class LimeBase(object):
         if model_regressor is None:
             model_regressor = GaussianNB()
         easy_model = model_regressor
-        print(neighborhood_data[:, used_features])
-        print(labels_column[:100])
+        # print(neighborhood_data[:, used_features])
+        # print(labels_column[:100])
         easy_model.fit(neighborhood_data[:, used_features],
                       labels_column, sample_weight=weights)
         prediction_score = easy_model.score(
