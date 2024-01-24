@@ -12,7 +12,7 @@ from NB_lime.lime_tabular import LimeTabularExplainer_NB
 class ModelBuild:
     def __init__(self, model_type):
         if model_type == 'DecisionTree':
-            self.model = DecisionTreeClassifier()
+            self.model = DecisionTreeClassifier(class_weight = {0: 10, 1: 1})
         elif model_type == 'Logistic':
             print('logistic regression selected')
             self.model = LogisticRegression()
